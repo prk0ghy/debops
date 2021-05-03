@@ -67,3 +67,6 @@ tags
 
 ### JetBrains IDE ###
 .idea
+
+### src ####
+src/

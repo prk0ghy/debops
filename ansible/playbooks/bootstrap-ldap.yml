@@ -12,6 +12,9 @@
 # DebOps 'common.yml' playbook on a host afterwards to complete the initial
 # configuration, for example firewall/TCP Wrappers setup.
 #
+# Note that an alternative is provided by bootstrap-sss which relies on the
+# sssd daemon rather than the nslcd/nscd daemons.
+#
 # Usage:
 # To connect directly as root, run:
 #
@@ -31,7 +34,8 @@
 
   tasks:
 
-    - import_role:
+    - name: Initialize Ansible support via raw tasks
+      import_role:
         name: 'python'
         tasks_from: 'main_raw'
       tags: [ 'role::python_raw', 'skip::python_raw', 'role::python' ]
@@ -76,12 +80,14 @@
 
   pre_tasks:
 
-    - import_role:
+    - name: Prepare pki environment
+      import_role:
         name: 'pki'
         tasks_from: 'main_env'
       tags: [ 'role::pki', 'role::pki:secret', 'role::secret' ]
 
-    - import_role:
+    - name: Prepare sshd environment
+      import_role:
         name: 'sshd'
         tasks_from: 'main_env'
       tags: [ 'role::sshd', 'role::ldap' ]

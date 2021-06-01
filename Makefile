@@ -4,6 +4,9 @@
 
 # DebOps Makefile
 
+# Use the Bash shell by default
+SHELL := /bin/bash
+
 .PHONY: all
 all: help
 
@@ -172,12 +175,13 @@ test-playbook-syntax:
 	@ANSIBLE_ROLES_PATH="ansible/roles" ANSIBLE_HOST_PATTERN_MISMATCH=ignore \
 	 ansible-playbook --syntax-check ansible/playbooks/bootstrap.yml \
 		                         ansible/playbooks/bootstrap-ldap.yml \
+		                         ansible/playbooks/bootstrap-sss.yml \
 		                         ansible/playbooks/site.yml
 
 .PHONY: test-ansible-lint
 test-ansible-lint:
-	@printf "%s\n" "Checking Ansible roles using ansible-lint..."
-	@ansible-lint ansible/roles/*
+	@printf "%s\n" "Checking Ansible content using ansible-lint..."
+	@ansible-lint -v
 
 .PHONY: test-yaml
 test-yaml:

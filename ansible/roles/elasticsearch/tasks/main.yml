@@ -5,11 +5,46 @@
 # Copyright (C) 2014-2017 DebOps <https://debops.org/>
 # SPDX-License-Identifier: GPL-3.0-only
 
-- import_role:
+- name: Import custom Ansible plugins
+  import_role:
+    name: 'ansible_plugins'
+
+- name: Import DebOps global handlers
+  import_role:
     name: 'global_handlers'
 
-- import_role:
+- name: Import DebOps secret role
+  import_role:
     name: 'secret'
+
+- name: Install Elasticsearch packages
+  package:
+    name: '{{ q("flattened", (elasticsearch__base_packages
+                              + elasticsearch__packages)) }}'
+    state: 'present'
+  notify: [ 'Refresh host facts' ]
+  register: elasticsearch__register_packages
+  until: elasticsearch__register_packages is succeeded
+
+- name: Make sure that Ansible local facts directory exists
+  file:
+    path: '/etc/ansible/facts.d'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
+- name: Save Elasticsearch local facts
+  template:
+    src: 'etc/ansible/facts.d/elasticsearch.fact.j2'
+    dest: '/etc/ansible/facts.d/elasticsearch.fact'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  notify: [ 'Refresh host facts' ]
+
+- name: Update Ansible facts if they were modified
+  meta: 'flush_handlers'
 
 - name: Check if the dependent config file exists
   stat:
@@ -57,13 +92,7 @@
     owner: 'root'
     group: 'root'
     mode: '0644'
-  register: elasticsearch__register_systemd
-
-- name: Reload systemd daemons
-  systemd:
-    daemon_reload: True
-  when: (elasticsearch__register_systemd is changed and
-         ansible_service_mgr == 'systemd')
+  notify: [ 'Reload service manager' ]
 
 - name: Generate Elasticsearch configuration
   template:
@@ -95,6 +124,9 @@
     mode:    '0750'
   with_flattened:
     - '{{ elasticsearch__path_data }}'
+
+- name: Reload systemd daemons
+  meta: 'flush_handlers'
 
 - name: Check state of installed Elasticsearch plugins
   command: bin/elasticsearch-plugin list
@@ -134,24 +166,3 @@
   become: False
   delegate_to: 'localhost'
   tags: [ 'role::elasticsearch:config' ]
-
-- name: Make sure that Ansible local facts directory exists
-  file:
-    path: '/etc/ansible/facts.d'
-    state: 'directory'
-    owner: 'root'
-    group: 'root'
-    mode: '0755'
-
-- name: Save Elasticsearch local facts
-  template:
-    src: 'etc/ansible/facts.d/elasticsearch.fact.j2'
-    dest: '/etc/ansible/facts.d/elasticsearch.fact'
-    owner: 'root'
-    group: 'root'
-    mode: '0755'
-  register: elasticsearch__register_facts
-
-- name: Update Ansible facts if they were modified
-  action: setup
-  when: elasticsearch__register_facts is changed

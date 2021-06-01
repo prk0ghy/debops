@@ -3,7 +3,12 @@
 # Copyright (C) 2017 DebOps <https://debops.org/>
 # SPDX-License-Identifier: GPL-3.0-only
 
-- import_role:
+- name: Import DebOps global handlers
+  import_role:
+    name: 'global_handlers'
+
+- name: Import DebOps secret role
+  import_role:
     name: 'secret'
 
 - name: Ensure that required packages are installed
@@ -110,8 +115,10 @@
   when: root_account__enabled|bool and root_account__fix_no_tty|bool
 
 - name: Manage root dotfiles
+  environment:
+    LC_MESSAGES: 'C'
   shell: |
-    if ! [ -e "$HOME/.yadm/repo.git" ] ; then
+    if ! yadm status > /dev/null ; then
         yadm clone --bootstrap "{{ root_account__dotfiles_repo }}"
     else
         yadm pull
@@ -137,8 +144,7 @@
     owner: 'root'
     group: 'root'
     mode: '0755'
-  register: root_account__register_facts
+  notify: [ 'Refresh host facts' ]
 
 - name: Reload facts if they were modified
-  action: setup
-  when: root_account__register_facts is changed
+  meta: 'flush_handlers'

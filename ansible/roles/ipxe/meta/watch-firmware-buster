@@ -4,7 +4,11 @@
 
 # Role: ipxe
 # Package: firmware-buster
+<<<<<<< HEAD
 # Version: 20210206
+=======
+# Version: 20210327
+>>>>>>> 62c6fb9cb699a631646fa98da6f82046180ebfd3
 
 version=4
 https://cdimage.debian.org/cdimage/unofficial/non-free/firmware/buster (20.+)/

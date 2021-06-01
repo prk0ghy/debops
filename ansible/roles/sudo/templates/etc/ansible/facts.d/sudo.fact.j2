@@ -11,6 +11,10 @@ from __future__ import print_function
 from json import dumps
 import os
 import subprocess
+<<<<<<< HEAD
+=======
+import locale
+>>>>>>> 62c6fb9cb699a631646fa98da6f82046180ebfd3
 
 
 def cmd_exists(cmd):
@@ -20,12 +24,21 @@ def cmd_exists(cmd):
     )
 
 
+# Ensure that external application output is consistent
+locale.setlocale(locale.LC_MESSAGES, 'C')
+
 output = {'configured': True,
           'installed': cmd_exists('sudo')}
 
 if output['installed']:
     output['version'] = subprocess.check_output(
+<<<<<<< HEAD
         ['sudo', '--version'], stderr=subprocess.STDOUT
     ).decode('utf-8').replace('\n', ' ').split(' ')[2]
+=======
+        ['sudo', '--version'], env=os.environ,
+        stderr=subprocess.STDOUT
+    ).decode('utf-8').split('\n')[0].split(' ')[-1]
+>>>>>>> 62c6fb9cb699a631646fa98da6f82046180ebfd3
 
 print(dumps(output, sort_keys=True, indent=4))

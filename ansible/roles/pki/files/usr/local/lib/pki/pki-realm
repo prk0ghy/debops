@@ -170,14 +170,15 @@ initialize_environment () {
 
     config["acme_client_script"]="${acme_client_script_map[${config['acme_client']}]}"
 
-    config["acme_ca"]="le-staging"
+    config["acme_ca"]="le-staging-v2"
 
     local -A acme_ca_api_map
     acme_ca_api_map=(
         ["le-live"]="https://acme-v01.api.letsencrypt.org"
+        ["le-live-v2"]="https://acme-v02.api.letsencrypt.org"
         ["le-staging"]="https://acme-staging.api.letsencrypt.org"
+        ["le-staging-v2"]="https://acme-staging-v02.api.letsencrypt.org"
     )
-
     config["acme_ca_api"]="${acme_ca_api_map[${config['acme_ca']}]}"
 
     config["acme_contacts"]=""
@@ -1077,6 +1078,14 @@ convert_der_to_pem () {
 }
 
 request_acme_tiny_certificate () {
+
+    # Rotate acme/error.log if it was modified more than two days ago. This
+    # allows another renewal attempt, but still prevents hitting rate limits.
+    # Let's Encrypt limits duplicate certificate requests to five per week
+    # (https://letsencrypt.org/docs/rate-limits/).
+    if [[ -e acme/error.log ]] && [[ $(find acme/error.log -mtime +1) ]]; then
+        mv acme/error.log "acme/error-$(date +%s).log"
+    fi
 
     if [ "${config['pki_acme']}" = "true" ] && [ -x "${config['acme_client_script']}" ] && [ -d "${config['acme_challenge_dir']}" ] && [ ! -e acme/error.log ] && [ -r acme/request.pem ] ; then
 
@@ -2548,6 +2557,19 @@ sub_schedule () {
 print_usage () {
     cat << EOF
 Usage: ${script_name} <command> [parameters]
+Available commands:
+
+            init
+            "usage: ${script_name} init <-n|--name[=]realm>"
+
+            new-realm
+            "usage: ${script_name} new-realm <-n|--name[=]realm>"
+
+            run
+            "usage: ${script_name} run <-n|--name[=]realm>"
+
+            schedule
+            "usage: ${script_name} schedule <-n|--name[=]realm>"
 EOF
 
 }

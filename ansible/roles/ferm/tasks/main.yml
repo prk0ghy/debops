@@ -5,7 +5,8 @@
 # Copyright (C) 2014-2017 DebOps <https://debops.org/>
 # SPDX-License-Identifier: GPL-3.0-only
 
-- import_role:
+- name: Import DebOps global handlers
+  import_role:
     name: 'global_handlers'
 
 - name: Configure ferm status in debconf
@@ -24,6 +25,12 @@
   register: ferm__register_packages
   until: ferm__register_packages is succeeded
   when: ferm__enabled | bool
+
+- name: Manage iptables backend using alternatives
+  alternatives:
+    name: 'iptables'
+    path: '{{ ferm__iptables_backend_path }}'
+  when: ferm__enabled | bool and ferm__iptables_backend_enabled|bool
 
 - name: Make sure required directories exist
   file:
@@ -124,7 +131,7 @@
                      + (item.item.value.weight | d("0"))|int) }}_rule_{{ item.item.value.name
                                                                          | d(item.item.key) }}.conf'
          -exec rm -vf {} +
-  with_items:
+  with_items:  # noqa no-handler
     - '{{ ferm__register_rules_removed.results }}'
     - '{{ ferm__register_rules_created.results }}'
   when: (item.item.key|d() and item is changed)
@@ -164,7 +171,7 @@
   tags: [ 'role::ferm:rules' ]
 
 - name: Restart ferm
-  service:
+  service:  # noqa no-handler
     name: 'ferm'
     state: 'restarted'
   when: (ferm__enabled | bool and (ferm__register_files is changed or
@@ -207,8 +214,7 @@
     group: 'root'
     mode: '0644'
   tags: [ 'role::ferm:rules' ]
-  register: ferm__register_facts
+  notify: [ 'Refresh host facts' ]
 
 - name: Update Ansible facts if they were modified
-  action: setup
-  when: ferm__register_facts is changed
+  meta: 'flush_handlers'

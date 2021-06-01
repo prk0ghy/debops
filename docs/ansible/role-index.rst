@@ -143,6 +143,7 @@ Directory services
 - :ref:`debops.nslcd`
 - :ref:`debops.nsswitch`
 - :ref:`debops.slapd`
+- :ref:`debops.sssd`
 
 
 Domain Name System
@@ -282,6 +283,7 @@ packages.
 - :ref:`debops.apt_preferences`
 - :ref:`debops.apt_proxy`
 - :ref:`debops.debops_legacy`
+- :ref:`debops.extrepo`
 - :ref:`debops.keyring`
 - :ref:`debops.unattended_upgrades`
 - ``debops.reprepro``
@@ -333,6 +335,7 @@ System configuration
 - :ref:`debops.pam_access`
 - :ref:`debops.resources`
 - :ref:`debops.root_account`
+- :ref:`debops.sssd`
 - :ref:`debops.swapfile`
 - :ref:`debops.sysctl`
 - :ref:`debops.sysfs`

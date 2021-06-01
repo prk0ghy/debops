@@ -12,9 +12,13 @@ from json import dumps
 import os
 import subprocess
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import locale
 >>>>>>> 62c6fb9cb699a631646fa98da6f82046180ebfd3
+=======
+import locale
+>>>>>>> 7de63608842f7f24efd34b221e03ade020233970
 
 
 def cmd_exists(cmd):
@@ -33,6 +37,7 @@ output = {'configured': True,
 if output['installed']:
     output['version'] = subprocess.check_output(
 <<<<<<< HEAD
+<<<<<<< HEAD
         ['sudo', '--version'], stderr=subprocess.STDOUT
     ).decode('utf-8').replace('\n', ' ').split(' ')[2]
 =======
@@ -40,5 +45,10 @@ if output['installed']:
         stderr=subprocess.STDOUT
     ).decode('utf-8').split('\n')[0].split(' ')[-1]
 >>>>>>> 62c6fb9cb699a631646fa98da6f82046180ebfd3
+=======
+        ['sudo', '--version'], env=os.environ,
+        stderr=subprocess.STDOUT
+    ).decode('utf-8').split('\n')[0].split(' ')[-1]
+>>>>>>> 7de63608842f7f24efd34b221e03ade020233970
 
 print(dumps(output, sort_keys=True, indent=4))

@@ -5,10 +5,14 @@
 # Role: ipxe
 # Package: netboot-buster
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Version: 20190702+deb10u8
 =======
 # Version: 20190702+deb10u9
 >>>>>>> 62c6fb9cb699a631646fa98da6f82046180ebfd3
+=======
+# Version: 20190702+deb10u9
+>>>>>>> 7de63608842f7f24efd34b221e03ade020233970
 
 version=4
 https://deb.debian.org/debian/dists/buster/main/installer-amd64 (20.+)/

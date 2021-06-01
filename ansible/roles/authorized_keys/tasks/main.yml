@@ -3,6 +3,7 @@
 # Copyright (C) 2016-2021 DebOps <https://debops.org/>
 # SPDX-License-Identifier: GPL-3.0-only
 
+<<<<<<< HEAD
 - name: Import custom Ansible plugins
   import_role:
     name: 'ansible_plugins'
@@ -11,6 +12,8 @@
   import_role:
     name: 'global_handlers'
 
+=======
+>>>>>>> 7de63608842f7f24efd34b221e03ade020233970
 - name: Import DebOps secret role
   import_role:
     name: 'secret'

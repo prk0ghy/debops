@@ -49,6 +49,7 @@
     group: 'root'
     mode: '0755'
 <<<<<<< HEAD
+<<<<<<< HEAD
   register: sudo__register_facts
 
 - name: Update Ansible facts if they were modified
@@ -60,6 +61,12 @@
 - name: Update Ansible facts if they were modified
   meta: 'flush_handlers'
 >>>>>>> 62c6fb9cb699a631646fa98da6f82046180ebfd3
+=======
+  notify: [ 'Refresh host facts' ]
+
+- name: Update Ansible facts if they were modified
+  meta: 'flush_handlers'
+>>>>>>> 7de63608842f7f24efd34b221e03ade020233970
 
 - name: Ensure that '/etc/sudoers' includes '/etc/sudoers.d'
   lineinfile:
@@ -107,9 +114,13 @@
 
 - name: Update Ansible facts if they were modified
 <<<<<<< HEAD
+<<<<<<< HEAD
   action: setup
   when: sudo__register_sudoers_removed is changed or
         sudo__register_sudoers_created is changed
 =======
   meta: 'flush_handlers'
 >>>>>>> 62c6fb9cb699a631646fa98da6f82046180ebfd3
+=======
+  meta: 'flush_handlers'
+>>>>>>> 7de63608842f7f24efd34b221e03ade020233970

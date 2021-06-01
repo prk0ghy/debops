@@ -123,3 +123,26 @@
   become: False
   delegate_to: 'localhost'
   tags: [ 'role::kibana:config' ]
+<<<<<<< HEAD
+=======
+
+- name: Make sure that Ansible local facts directory exists
+  file:
+    path: '/etc/ansible/facts.d'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
+- name: Save Kibana local facts
+  template:
+    src: 'etc/ansible/facts.d/kibana.fact.j2'
+    dest: '/etc/ansible/facts.d/kibana.fact'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  notify: [ 'Refresh host facts' ]
+
+- name: Update Ansible facts if they were modified
+  meta: 'flush_handlers'
+>>>>>>> 7de63608842f7f24efd34b221e03ade020233970
